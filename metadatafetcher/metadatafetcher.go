@@ -16,11 +16,11 @@ type OpenGraphMetaData struct {
 	Video       string `json:"video"`
 }
 
-func checkTagPresent(metadata map[string]string, tag string) (string, string) {
+func checkTagPresent(metadata map[string]string, tag string) string {
 	if tagName, exists := metadata[tag]; exists {
-		return tag, tagName
+		return tagName
 	}
-	return tag, ""
+	return ""
 }
 
 func FetchHTML(url string) (OpenGraphMetaData, error) {
@@ -47,17 +47,14 @@ func FetchHTML(url string) (OpenGraphMetaData, error) {
 		}
 	})
 
-	// fmt.Println("==========================================")
-	// fmt.Println(url)
-	_, titleTag := checkTagPresent(metadata, "og:title")
-	_, urlTag := checkTagPresent(metadata, "og:url")
-	_, imageTag := checkTagPresent(metadata, "og:image")
-	_, typeTag := checkTagPresent(metadata, "og:type")
-	_, siteNameTag := checkTagPresent(metadata, "og:site_name")
-	_, descriptionTag := checkTagPresent(metadata, "og:description")
-	_, videoTag := checkTagPresent(metadata, "og:video")
-	_, audioTag := checkTagPresent(metadata, "og:audio")
-	// fmt.Println("==========================================")
+	titleTag := checkTagPresent(metadata, "og:title")
+	urlTag := checkTagPresent(metadata, "og:url")
+	imageTag := checkTagPresent(metadata, "og:image")
+	typeTag := checkTagPresent(metadata, "og:type")
+	siteNameTag := checkTagPresent(metadata, "og:site_name")
+	descriptionTag := checkTagPresent(metadata, "og:description")
+	videoTag := checkTagPresent(metadata, "og:video")
+	audioTag := checkTagPresent(metadata, "og:audio")
 
 	return OpenGraphMetaData{
 		Title:       titleTag,
