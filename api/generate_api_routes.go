@@ -6,6 +6,7 @@ func (server *Server) generateRoutes() {
 	router := gin.Default()
 
 	router.GET("/v1/healthcheck", server.HealthCheckHandler)
+	router.GET("/v1/metadata/fetch", server.MetadataFetcherHandler)
 	/*
 			*
 			* fetch the metadata for a url

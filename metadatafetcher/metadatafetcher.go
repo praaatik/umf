@@ -1,7 +1,6 @@
 package metadatafetcher
 
 import (
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
 )
@@ -24,10 +23,17 @@ func checkTagPresent(metadata map[string]string, tag string) (string, string) {
 	return tag, ""
 }
 
-func FetchHTML(url string) OpenGraphMetaData {
-	respon, _ := http.Get(url)
+func FetchHTML(url string) (OpenGraphMetaData, error) {
+	respon, err := http.Get(url)
+	if err != nil {
+		return OpenGraphMetaData{}, err
+	}
 
-	doc, _ := goquery.NewDocumentFromReader(respon.Body)
+	doc, err := goquery.NewDocumentFromReader(respon.Body)
+	if err != nil {
+		return OpenGraphMetaData{}, err
+	}
+
 	metadata := make(map[string]string)
 
 	doc.Find("meta").Each(func(i int, s *goquery.Selection) {
@@ -41,8 +47,8 @@ func FetchHTML(url string) OpenGraphMetaData {
 		}
 	})
 
-	fmt.Println("==========================================")
-	fmt.Println(url)
+	// fmt.Println("==========================================")
+	// fmt.Println(url)
 	_, titleTag := checkTagPresent(metadata, "og:title")
 	_, urlTag := checkTagPresent(metadata, "og:url")
 	_, imageTag := checkTagPresent(metadata, "og:image")
@@ -51,7 +57,7 @@ func FetchHTML(url string) OpenGraphMetaData {
 	_, descriptionTag := checkTagPresent(metadata, "og:description")
 	_, videoTag := checkTagPresent(metadata, "og:video")
 	_, audioTag := checkTagPresent(metadata, "og:audio")
-	fmt.Println("==========================================")
+	// fmt.Println("==========================================")
 
 	return OpenGraphMetaData{
 		Title:       titleTag,
@@ -62,5 +68,5 @@ func FetchHTML(url string) OpenGraphMetaData {
 		Description: descriptionTag,
 		Audio:       audioTag,
 		Video:       videoTag,
-	}
+	}, nil
 }
